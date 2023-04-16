@@ -39,9 +39,10 @@ export type outputOptType = {
   width: number;
   height: number;
 }
+
 export async function cropPicture(src: string, dst: string, crop: cropOptType, out: outputOptType) {
   const img = await Jimp.read(src);
   img.crop(crop.x, crop.y, crop.width, crop.height);
   img.resize(out.width, out.height);
-  await img.writeAsync(dst);
+  await img.quality(100).writeAsync(dst);
 }

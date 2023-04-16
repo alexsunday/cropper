@@ -1,6 +1,6 @@
 <template>
   <div class='warn-root'>
-    <span>{{msg}}</span>
+    <span :style="`background-color: ${background}`">{{msg}}</span>
   </div>
 </template>
 
@@ -13,7 +13,17 @@ export default class WarnMsgWidget extends Vue {
   msg!:string;
 
   @Prop()
+  color?: string;
+
+  @Prop()
   timeoutMs!:number;
+
+  get background() {
+    if(this.color) {
+      return this.color;
+    }
+    return "#E6A23C";
+  }
 
   @Emit()
   finish() {

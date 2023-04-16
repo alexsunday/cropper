@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import WarnMsgWidget from './warn-msg.vue';
 
-export async function showWarnMsg<T>(msg: string, timeoutMs: number, parent?: Vue):Promise<T> {
+export async function showWarnMsg<T>(msg: string, timeoutMs: number, color?: string, parent?: Vue):Promise<T> {
   return new Promise((resolve, reject) => {
     const w = new Vue({
       parent: parent,
@@ -9,6 +9,7 @@ export async function showWarnMsg<T>(msg: string, timeoutMs: number, parent?: Vu
         return h(WarnMsgWidget, {
           props: {
             msg: msg,
+            color: color,
             timeoutMs: timeoutMs,
           },
           on: {

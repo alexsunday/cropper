@@ -7,7 +7,12 @@
       @clear="onClear"
       @begin="onBegin"
     />
-    <button class="opt-btn" @click="showHeader=!showHeader">选项</button>
+    <div class="opt-btn">
+      <button @click="showHeader=!showHeader">
+        <span v-if="showHeader">收起</span>
+        <span v-else>选项</span>
+      </button>
+    </div>
     <div class="cropper-container">
       <cropper
         v-for="file in files"
@@ -16,23 +21,27 @@
         :evtBus="evtBus"
       />
     </div>
+    <progress-console v-if="showProgress" :evtBus="evtBus" :total="files.length" @all-done="allDone" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Ref, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import HeaderTool from "@/components/header.vue";
 import Cropper from "@/components/cropper.vue";
+import ProgressConsole from '@/components/progress.vue';
 import {showWarnMsg} from '@/components/common';
 
 @Component({
   components: {
     cropper: Cropper,
     "header-tool": HeaderTool,
+    'progress-console': ProgressConsole,
   },
 })
 export default class App extends Vue {
   evtBus = new Vue();
+  showProgress = false;
   showHeader = true;
   files: File[] = [];
 
@@ -46,10 +55,16 @@ export default class App extends Vue {
 
   onBegin(evt: unknown) {
     if(this.files.length === 0) {
-      showWarnMsg('请选择待处理图片', 2 * 1000, this);
+      showWarnMsg('请选择待处理图片', 2 * 1000);
       return;
     }
-    this.evtBus.$emit("done", evt);
+    this.evtBus.$emit("begin-crop", evt);
+    this.showProgress = true;
+  }
+
+  allDone() {
+    this.showProgress = false;
+    showWarnMsg('已全部完成', 2*1000, 'green');
   }
 }
 </script>

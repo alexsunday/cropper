@@ -11,7 +11,7 @@
 import {Component, Vue, Prop, Ref} from 'vue-property-decorator';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import { outOpt } from './common';
+import { outOpt, showWarnMsg } from './common';
 
 @Component
 export default class Copper extends Vue {
@@ -30,8 +30,8 @@ export default class Copper extends Vue {
 
   created() {
     this.loadFile();
-    this.evtBus.$on('done', (opt: any) => {
-      this.done(opt);
+    this.evtBus.$on('begin-crop', (opt: any) => {
+      this.beginCrop(opt);
     });
     this.evtBus.$on('size-changed', (v: {width: number;height: number}) => {
       this.cropper!.setAspectRatio(v.width/v.height);
@@ -39,7 +39,7 @@ export default class Copper extends Vue {
   }
 
   beforeDestroy() {
-    this.evtBus.$off('done');
+    this.evtBus.$off('begin-crop');
     this.evtBus.$off('size-changed');
     this.cropper?.destroy();
   }
@@ -58,12 +58,12 @@ export default class Copper extends Vue {
     });
   }
 
-  done(opt: outOpt) {
+  async beginCrop(opt: outOpt) {
     if(!this.cropper) {
       return;
     }
     const r1 = this.cropper.getData();
-    (window as any).eapi.cropDone({
+    await (window as any).eapi.cropDone({
       ...r1,
       path: this.file.path,
       out: {
@@ -72,6 +72,7 @@ export default class Copper extends Vue {
         height: opt.height,
       }
     });
+    this.evtBus.$emit('file-crop-done', this.file.path);
   }
 
   loadFile() {

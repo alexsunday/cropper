@@ -19,16 +19,16 @@ type cropArgsType = {
 }
 
 export function initEvents(wnd: BrowserWindow) {
-  ipcMain.on('eapi:crop-done', (sender: any, rs: any) => {
+  ipcMain.handle('eapi:crop-done', async (sender: any, rs: any) => {
     if (!Array.isArray(rs)) {
       console.warn('arguments not array!');
-      return;
+      return null;
     }
     const r0: cropArgsType = rs[0];
     const fileName = path.basename(r0.path);
     const dstName = path.join(r0.out.dir, fileName);
 
-    cropPicture(r0.path, dstName, {
+    await cropPicture(r0.path, dstName, {
       x: r0.x,
       y: r0.y,
       width: r0.width,
@@ -36,9 +36,9 @@ export function initEvents(wnd: BrowserWindow) {
     }, {
       width: r0.out.width,
       height: r0.out.height,
-    }).then(()=>{
-      console.log(`${fileName} done.`);
     });
+    console.log(`${fileName} done.`);
+    return 'OK';
   });
 
   ipcMain.handle('eapi:open-directory', async (sender: any) => {

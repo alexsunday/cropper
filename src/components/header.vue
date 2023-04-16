@@ -133,7 +133,7 @@ export default class Header extends Vue {
   }
 
   showWarn(msg: string) {
-    showWarnMsg(msg, 2 * 1000, this);
+    showWarnMsg(msg, 2 * 1000);
   }
 }
 </script>
