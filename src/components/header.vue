@@ -48,6 +48,7 @@
           v-show="outDir !== ''"
           v-if="outStyle === 'OUTPUT'"
         />
+        <button @click="faceRecognition" title="警告！！！ 可能会很卡顿!">人脸辅助</button>
         <button @click="saveFiles">开始</button>
       </div>
     </div>
@@ -97,10 +98,15 @@ export default class Header extends Vue {
       this.showWarn("尺寸值不合法");
       return;
     }
-    this.evtBus.$emit("size-changed", {
+    const nSize = {
       width: this.width,
       height: this.height,
-    });
+    };
+    this.evtBus.$emit("size-changed", nSize);
+    // 还需要专门让父组件知道 但不能用上面的 size-changed 
+    // 因为 cropper 销毁时，会 off 事件
+    // 如果换做 EventTarget 则不会有这个问题
+    this.$emit('size-changed', nSize);
   }
 
   importFile() {
@@ -119,6 +125,10 @@ export default class Header extends Vue {
       width: this.width,
       height: this.height,
     });
+  }
+
+  faceRecognition() {
+    this.evtBus.$emit('face-recognition');
   }
 
   clear() {

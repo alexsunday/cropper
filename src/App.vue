@@ -6,6 +6,7 @@
       @input-changed="inputChanged"
       @clear="onClear"
       @begin="onBegin"
+      @size-changed='sizeChanged'
     />
     <div class="opt-btn">
       <button @click="showHeader=!showHeader">
@@ -19,9 +20,9 @@
         :key="file.path"
         :file="file"
         :evtBus="evtBus"
+        :aspectRatio="aspectRatio"
       />
     </div>
-    <progress-console v-if="showProgress" :evtBus="evtBus" :total="files.length" @all-done="allDone" />
   </div>
 </template>
 
@@ -31,22 +32,39 @@ import HeaderTool from "@/components/header.vue";
 import Cropper from "@/components/cropper.vue";
 import ProgressConsole from '@/components/progress.vue';
 import {showWarnMsg} from '@/components/common';
+import {loadTinyModels} from '@/components/face-recognition';
+// import testWidget from '@/components/ce.vue';
 
 @Component({
   components: {
     cropper: Cropper,
     "header-tool": HeaderTool,
     'progress-console': ProgressConsole,
+    // 'test-widget': testWidget,
   },
 })
 export default class App extends Vue {
+  // 这里使用 vue 内置消息机制做为通讯
+  // 但无法各自「取消」，考虑替换为 EventTarget ?
   evtBus = new Vue();
   showProgress = false;
   showHeader = true;
   files: File[] = [];
 
+  // size
+  aspectRatio = 1;
+
+  created() {
+    // 启动后加载一下 face-api 的模型
+    loadTinyModels();
+  }
+
   inputChanged(files: File[]) {
     this.files.push(...files);
+  }
+
+  sizeChanged(v: {width: number;height: number}) {
+    this.aspectRatio = v.width / v.height;
   }
 
   onClear() {

@@ -8,4 +8,7 @@ declare global {
       [elem: string]: any
     }
   }
+
+  declare const faceapi: any;
 }
+

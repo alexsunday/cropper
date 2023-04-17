@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import { BrowserWindow, ipcMain, dialog } from 'electron'
 import { cropPicture } from './pic';
@@ -51,6 +52,15 @@ export function initEvents(wnd: BrowserWindow) {
     } else {
       return filePaths[0]
     }
+  });
+
+  // 临时使用 接收序列化后的 arrayBuffer 并写入到磁盘中
+  ipcMain.handle('eapi:send-data', (sender: any, buf: any) => {
+    console.log(buf.length);
+    console.log(buf instanceof Uint8Array);
+    console.log(buf instanceof Buffer);
+    fs.writeFileSync('./params', buf);
+    return 'OK';
   });
 }
 

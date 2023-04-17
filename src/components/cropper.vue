@@ -2,7 +2,7 @@
   <div class='copper-root'>
     <p>{{title}}</p>
     <div class="cropper">
-      <img class="img" :src="image" alt="pic here"/>
+      <img ref="img" class="img" :src="image" alt="pic here"/>
     </div>
   </div>
 </template>
@@ -11,7 +11,9 @@
 import {Component, Vue, Prop, Ref} from 'vue-property-decorator';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
-import { outOpt, showWarnMsg } from './common';
+import { outOpt } from './common';
+import type{FaceDetection} from '@vladmandic/face-api';
+import { detectAllFace } from './face-recognition';
 
 @Component
 export default class Copper extends Vue {
@@ -20,6 +22,12 @@ export default class Copper extends Vue {
 
   @Prop()
   evtBus!:Vue;
+
+  @Prop()
+  aspectRatio!:number;
+
+  @Ref()
+  img!:HTMLImageElement;
 
   image: string|ArrayBuffer = "";
   cropper: Cropper|null = null;
@@ -30,17 +38,39 @@ export default class Copper extends Vue {
 
   created() {
     this.loadFile();
+    // 收到开始裁切命令
     this.evtBus.$on('begin-crop', (opt: any) => {
       this.beginCrop(opt);
     });
+    // 裁切尺寸调整
     this.evtBus.$on('size-changed', (v: {width: number;height: number}) => {
       this.cropper!.setAspectRatio(v.width/v.height);
+    });
+    // 收到人脸识别命令
+    this.evtBus.$on('face-recognition', () => {
+      this.faceRecognition();
+    });
+  }
+
+  async faceRecognition() {
+    const item: FaceDetection|undefined = await detectAllFace(this.img);
+    if(!item) {
+      console.log('可能没有识别到?');
+      return;
+    }
+
+    this.cropper!.setData({
+      x: item.box.x,
+      y: item.box.y,
+      width: item.box.width,
+      height: item.box.height,
     });
   }
 
   beforeDestroy() {
     this.evtBus.$off('begin-crop');
     this.evtBus.$off('size-changed');
+    this.evtBus.$off('face-recognition');
     this.cropper?.destroy();
   }
 
@@ -54,7 +84,7 @@ export default class Copper extends Vue {
     }
     this.cropper = new Cropper(img, {
       viewMode: 2,
-      aspectRatio: 1,
+      aspectRatio: this.aspectRatio,
     });
   }
 
