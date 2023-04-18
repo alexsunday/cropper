@@ -1,6 +1,6 @@
 <template>
   <div class='copper-root'>
-    <p>{{title}}</p>
+    <p class="filename">{{title}}</p>
     <div class="cropper">
       <img ref="img" class="img" :src="image" alt="pic here"/>
     </div>
@@ -14,6 +14,7 @@ import 'cropperjs/dist/cropper.css';
 import { outOpt } from './common';
 import type{FaceDetection} from '@vladmandic/face-api';
 import { detectAllFace } from './face-recognition';
+import * as path from 'path';
 
 @Component
 export default class Copper extends Vue {
@@ -33,7 +34,10 @@ export default class Copper extends Vue {
   cropper: Cropper|null = null;
 
   get title() {
-    return this.file.path;
+    let p = this.file.path;
+    p = p.replaceAll("\\", "/");
+    // return this.file.path;
+    return path.basename(p);
   }
 
   created() {
@@ -130,5 +134,12 @@ export default class Copper extends Vue {
 .img {
   display: block;
   max-width: 100%;
+}
+.filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 </style>

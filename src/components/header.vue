@@ -2,14 +2,7 @@
   <div class="form-root">
     <div class="container import-container">
       <span>输入: </span>
-      <input
-        type="file"
-        multiple
-        accept="image/*"
-        ref="fileInput"
-        @change="fileChanged"
-        style="display: none"
-      />
+      <input type="file" multiple accept="image/*" ref="fileInput" @change="fileChanged" style="display: none" />
       <button @click="importFile">导入文件</button>
       <button @click="clear">清除/放弃</button>
     </div>
@@ -17,21 +10,11 @@
       <span>尺寸: </span>
       <label>
         <span class="p-span">宽 </span>
-        <input
-          class="p-input"
-          type="number"
-          v-model.number="width"
-          placeholder="width"
-        />
+        <input class="p-input" type="number" v-model.number="width" placeholder="width" />
       </label>
       <label>
         <span class="p-span">高 </span>
-        <input
-          class="p-input"
-          type="number"
-          v-model.number="height"
-          placeholder="height"
-        />
+        <input class="p-input" type="number" v-model.number="height" placeholder="height" />
       </label>
       <button @click="sizeChanged">🗸</button>
     </div>
@@ -40,13 +23,7 @@
       <button @click="selectOutputDir" v-if="outStyle === 'OUTPUT'">
         选择文件夹
       </button>
-      <input
-        type="text"
-        v-model="outDir"
-        placeholder="输出路径"
-        v-show="outDir !== ''"
-        v-if="outStyle === 'OUTPUT'"
-      />
+      <input type="text" v-model="outDir" placeholder="输出路径" v-show="outDir !== ''" v-if="outStyle === 'OUTPUT'" />
       <button @click="faceRecognition" title="警告！！！ 可能会很卡顿!">人脸辅助</button>
       <button @click="saveFiles">开始</button>
     </div>
@@ -56,7 +33,7 @@
 
 <script lang='ts'>
 import { Component, Vue, Prop, Ref, Emit } from "vue-property-decorator";
-import { outOpt, showWarnMsg } from "./common";
+import { outOpt } from "./common";
 
 @Component
 export default class Header extends Vue {
@@ -128,7 +105,11 @@ export default class Header extends Vue {
   }
 
   faceRecognition() {
-    this.evtBus.$emit('face-recognition');
+    this.$confirm('图片较多时可能会非常卡顿，确认继续?').then(r => {
+      this.evtBus.$emit('face-recognition');
+    }).catch(() => {
+      // ignored!
+    });
   }
 
   clear() {
@@ -143,7 +124,10 @@ export default class Header extends Vue {
   }
 
   showWarn(msg: string) {
-    showWarnMsg(msg, 2 * 1000);
+    this.$message({
+      type: 'warning',
+      message: msg,
+    });
   }
 }
 </script>

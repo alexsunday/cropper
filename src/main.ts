@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue';
+import "./element";
+
 import { loadTinyModels } from '@/components/face-recognition';
 
 Vue.config.productionTip = false

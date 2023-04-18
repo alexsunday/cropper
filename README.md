@@ -1,19 +1,8 @@
 # cropper
+简单实现的一个图片批量裁剪工具，但每张图片需要人工选择待裁切范围。
 
-## Project setup
-```
-yarn install
-```
+1. 对比美图秀秀/acdsee/photoshop 等工具，这里可以批量处理，不限数量；
+1. 对比Birme工具，这里可以缩放图片，可以调整尺寸比例
+1. 本机工具，图片处理完毕后无需下载为zip后再解压
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
