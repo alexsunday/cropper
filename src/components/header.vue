@@ -1,57 +1,56 @@
 <template>
-  <div class="header-root">
-    <div class="form">
-      <div class="container import-container">
-        <span>输入: </span>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          ref="fileInput"
-          @change="fileChanged"
-          style="display: none"
-        />
-        <button @click="importFile">导入文件</button>
-        <button @click="clear">清除/放弃</button>
-      </div>
-      <div class="container size-container">
-        <span>尺寸: </span>
-        <label>
-          <span class="p-span">宽 </span>
-          <input
-            class="p-input"
-            type="number"
-            v-model.number="width"
-            placeholder="width"
-          />
-        </label>
-        <label>
-          <span class="p-span">高 </span>
-          <input
-            class="p-input"
-            type="number"
-            v-model.number="height"
-            placeholder="height"
-          />
-        </label>
-        <button @click="sizeChanged">🗸</button>
-      </div>
-      <div class="container output-container">
-        <span>输出: </span>
-        <button @click="selectOutputDir" v-if="outStyle === 'OUTPUT'">
-          选择文件夹
-        </button>
-        <input
-          type="text"
-          v-model="outDir"
-          placeholder="输出路径"
-          v-show="outDir !== ''"
-          v-if="outStyle === 'OUTPUT'"
-        />
-        <button @click="faceRecognition" title="警告！！！ 可能会很卡顿!">人脸辅助</button>
-        <button @click="saveFiles">开始</button>
-      </div>
+  <div class="form-root">
+    <div class="container import-container">
+      <span>输入: </span>
+      <input
+        type="file"
+        multiple
+        accept="image/*"
+        ref="fileInput"
+        @change="fileChanged"
+        style="display: none"
+      />
+      <button @click="importFile">导入文件</button>
+      <button @click="clear">清除/放弃</button>
     </div>
+    <div class="container size-container">
+      <span>尺寸: </span>
+      <label>
+        <span class="p-span">宽 </span>
+        <input
+          class="p-input"
+          type="number"
+          v-model.number="width"
+          placeholder="width"
+        />
+      </label>
+      <label>
+        <span class="p-span">高 </span>
+        <input
+          class="p-input"
+          type="number"
+          v-model.number="height"
+          placeholder="height"
+        />
+      </label>
+      <button @click="sizeChanged">🗸</button>
+    </div>
+    <div class="container output-container">
+      <span>输出: </span>
+      <button @click="selectOutputDir" v-if="outStyle === 'OUTPUT'">
+        选择文件夹
+      </button>
+      <input
+        type="text"
+        v-model="outDir"
+        placeholder="输出路径"
+        v-show="outDir !== ''"
+        v-if="outStyle === 'OUTPUT'"
+      />
+      <button @click="faceRecognition" title="警告！！！ 可能会很卡顿!">人脸辅助</button>
+      <button @click="saveFiles">开始</button>
+    </div>
+    <slot />
   </div>
 </template>
 
@@ -116,6 +115,7 @@ export default class Header extends Vue {
 
   saveFiles() {
     if (this.outStyle === "OUTPUT" && this.outDir === "") {
+      console.log('必须先选择输出文件夹');
       this.showWarn("必须先选择输出文件夹");
       return;
     }
@@ -153,8 +153,13 @@ export default class Header extends Vue {
   margin-bottom: 6px;
 }
 
-.header-root {
-  position: relative;
+.form-root {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  background-color: white;
+  padding: 8px;
+  user-select: none;
 }
 
 button,

@@ -29,7 +29,7 @@ export default class Copper extends Vue {
   @Ref()
   img!:HTMLImageElement;
 
-  image: string|ArrayBuffer = "";
+  image = "";
   cropper: Cropper|null = null;
 
   get title() {
@@ -108,7 +108,12 @@ export default class Copper extends Vue {
   loadFile() {
     const reader = new FileReader();
     reader.onload = e => {
-      this.image = e.target?.result || '';
+      const d = e.target?.result || '';
+      if(typeof d !== 'string') {
+        console.error('readAsDataUrl,but response not string');
+        return;
+      }
+      this.image = d;
       this.$nextTick().then(()=>{
         this.loadCropper();
       });
@@ -120,7 +125,6 @@ export default class Copper extends Vue {
 
 <style scoped>
 .copper-root {
-  /* height: 600px; */
   margin: 10px;
 }
 .img {

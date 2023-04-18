@@ -45,6 +45,7 @@ export default class WarnMsgWidget extends Vue {
   left: 0;
   right: 0;
   text-align: center;
+  z-index: 12;
 }
 
 span {
